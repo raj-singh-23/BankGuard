@@ -1,0 +1,14 @@
+com\bankguard\enrichmentservice\dto\AlertCasePayload.class
+com\bankguard\enrichmentservice\client\AlertCaseClient.class
+com\bankguard\enrichmentservice\dto\EnrichmentRequest.class
+com\bankguard\enrichmentservice\dto\CustomerDTO.class
+com\bankguard\enrichmentservice\dto\PreviousTransactionDTO.class
+com\bankguard\enrichmentservice\controller\EnrichmentController.class
+com\bankguard\enrichmentservice\EnrichmentServiceApplication.class
+com\bankguard\enrichmentservice\config\RestTemplateConfig.class
+com\bankguard\enrichmentservice\dto\TransactionDTO.class
+com\bankguard\enrichmentservice\dto\TransactionDecisionResponse.class
+com\bankguard\enrichmentservice\dto\GeminiDecisionResponse.class
+com\bankguard\enrichmentservice\dto\EnrichedTransactionDTO.class
+com\bankguard\enrichmentservice\service\EnrichmentService.class
+com\bankguard\enrichmentservice\dto\DecisionRequest.class

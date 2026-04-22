@@ -1,0 +1,17 @@
+com\bankguard\transactionservice\dto\TransactionEnrichmentDTO.class
+com\bankguard\transactionservice\dto\TransactionCreationRequest.class
+com\bankguard\transactionservice\entity\Transaction.class
+com\bankguard\transactionservice\service\TransactionService.class
+com\bankguard\transactionservice\exception\ReceiverAccountNotFoundException.class
+com\bankguard\transactionservice\TransactionServiceApplication.class
+com\bankguard\transactionservice\config\RestTemplateConfig.class
+com\bankguard\transactionservice\service\TransactionEnrichmentIntegrationService.class
+com\bankguard\transactionservice\controller\CustomerController.class
+com\bankguard\transactionservice\exception\TransactionProcessingException.class
+com\bankguard\transactionservice\repository\CustomerRepository.class
+com\bankguard\transactionservice\entity\Customer.class
+com\bankguard\transactionservice\repository\TransactionRepository.class
+com\bankguard\transactionservice\service\CustomerService.class
+com\bankguard\transactionservice\controller\TransactionController.class
+com\bankguard\transactionservice\dto\CustomerEnrichmentDTO.class
+com\bankguard\transactionservice\dto\EnrichmentRequestDTO.class
