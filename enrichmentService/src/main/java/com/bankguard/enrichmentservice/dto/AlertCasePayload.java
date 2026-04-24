@@ -15,7 +15,6 @@ public class AlertCasePayload {
     
     // Convenience fields for easier access in AlertCaseService
     private Double geminiRiskScore;             // Risk score from Gemini
-    private Long transactionId;                 // Transaction ID
     private String customerName;
     private Long customerId;// Customer name
     private Double amount;                      // Transaction amount

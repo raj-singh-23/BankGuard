@@ -1,6 +1,7 @@
 package com.bankguard.transactionservice.controller;
 
 import com.bankguard.transactionservice.dto.TransactionCreationRequest;
+import com.bankguard.transactionservice.dto.TransactionDecisionResponse;
 import com.bankguard.transactionservice.entity.Customer;
 import com.bankguard.transactionservice.entity.Transaction;
 import com.bankguard.transactionservice.repository.CustomerRepository;
@@ -45,31 +46,40 @@ public class TransactionController {
             transaction.setReceiverAccountNumber(request.getReceiverAccountNumber());
             transaction.setCustomerId(request.getCustomerId());
             transaction.setTime(LocalDateTime.now());
-            transaction.setRiskScore(0.0);
+            double val = 0.0;
+            if(senderCustomer!=null){
+                val = senderCustomer.getRiskScore();
+            }
+            transaction.setRiskScore(val);
 
             // 3. SAVE transaction FIRST to get the transactionId for enrichment service
             // The enrichment service MUST have a valid transactionId to send to AlertCaseService
-            Transaction savedTransaction = transactionService.saveTransaction(transaction);
+            // Transaction savedTransaction = transactionService.saveTransaction(transaction);
 
-            log.info("✓ Transaction saved to database with ID: {}", savedTransaction.getTransactionId());
+//            log.info("✓ Transaction saved to database with ID: {}", savedTransaction.getTransactionId());
 
             // 4. Get enrichment analysis from enrichment service (now with valid transactionId)
-            Object enrichedResponse = enrichmentIntegrationService.enrichTransactionWithService(savedTransaction, senderCustomer);
-
+            TransactionDecisionResponse enrichedResponse = enrichmentIntegrationService.enrichTransactionWithService(transaction, senderCustomer);
+            transaction.setCity(enrichedResponse.getCity());
+            transaction.setState(enrichedResponse.getState());
+            transaction.setAmount(enrichedResponse.getAmount());
+            transaction.setTime(enrichedResponse.getTime());
+            transaction.setStatus(enrichedResponse.getDecision());
             // 5. Process enrichment response - handles account balance updates if status is "genuine"
             // This will throw ReceiverAccountNotFoundException if receiver's account doesn't exist
             // Or TransactionProcessingException for other processing errors
-            Map<String, Object> processedResponse = enrichmentIntegrationService.processEnrichmentResponse(
-                    enrichedResponse,
-                    savedTransaction,
-                    senderCustomer
-            );
+//            Map<String, Object> processedResponse = enrichmentIntegrationService.processEnrichmentResponse(
+//                    enrichedResponse,
+//                    transaction,
+//                    senderCustomer
+//            );
+            Transaction savedTransaction = transactionService.saveTransaction(transaction);
 
             return new ResponseEntity<>(
                     Map.of(
                             "status", "SUCCESS",
-                            "transaction", savedTransaction,
-                            "processedResponse", processedResponse
+                            "transaction", savedTransaction
+//                            "processedResponse", processedResponse
                     ),
                     HttpStatus.CREATED
             );

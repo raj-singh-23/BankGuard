@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionDTO {
-    private Long transactionId;
     private Double amount;
     private String city;
     private String state;

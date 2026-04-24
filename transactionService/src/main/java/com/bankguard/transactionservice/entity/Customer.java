@@ -36,6 +36,9 @@ public class Customer {
     @Column(name = "account_number", nullable = false, unique = true)
     private String accountNo;
 
+    @Column(name = "risk_score", nullable = false)
+    private double riskScore;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "customer_id")
     private List<Transaction> transactions;

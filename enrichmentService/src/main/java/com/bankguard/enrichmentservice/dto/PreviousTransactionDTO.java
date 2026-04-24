@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PreviousTransactionDTO {
-    private Long transactionId;
     private Double amount;
     private String location;              // Combined location field
     private String ipAddress;

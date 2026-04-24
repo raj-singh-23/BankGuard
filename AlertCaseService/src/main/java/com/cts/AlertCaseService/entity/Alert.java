@@ -18,6 +18,5 @@ public class Alert {
     private Double riskScore;                   // Risk score from Gemini
     @Column(columnDefinition = "TEXT")
     private String reason;                      // Reason from Gemini (can be very long)
-    private Long transactionId;                 // Linked transaction
     private Long customerId;                    // Customer ID
 }

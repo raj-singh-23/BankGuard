@@ -18,7 +18,6 @@ public class CaseEntity {
     private LocalDateTime createdAt;
     private Double riskScore;                    // Gemini risk score
     private String geminiDecision;               // "flagged", "terminated", "genuine"
-    private Long transactionId;                  // Linked transaction ID
     private Double amount;                       // Transaction amount
     private String customerName;                 // Customer name from enrichment
     private Double customerBalance;              // Customer balance at time of transaction

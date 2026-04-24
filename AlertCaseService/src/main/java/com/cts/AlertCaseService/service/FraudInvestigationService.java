@@ -43,7 +43,6 @@ public class FraudInvestigationService {
         try {
             // Extract data from payload
             Double riskScore = payload.getGeminiRiskScore() != null ? payload.getGeminiRiskScore() : 0.0;
-            Long transactionId = payload.getTransactionId();
             String customerName = payload.getCustomerName();
             Double amount = payload.getAmount();
             String decision = payload.getDecisionStatus();
@@ -72,7 +71,6 @@ public class FraudInvestigationService {
                 }
             }
             alert.setReason(reason);
-            alert.setTransactionId(transactionId);
             alert.setCustomerId(customerId);
             alert.setCreatedAt(LocalDateTime.now());
             alertRepo.save(alert);
@@ -95,7 +93,6 @@ public class FraudInvestigationService {
             fraudCase.setReason("Fraud Alert: " + decision);
             fraudCase.setRiskScore(riskScore);
             fraudCase.setGeminiDecision(decision);
-            fraudCase.setTransactionId(transactionId);
             fraudCase.setAmount(amount);
             fraudCase.setCustomerName(customerName);
             fraudCase.setCreatedAt(LocalDateTime.now());
@@ -118,7 +115,6 @@ public class FraudInvestigationService {
                     riskScore,
                     fraudCase.getReason(),
                     decision,
-                    transactionId,
                     amount,
                     customerName,
                     fraudCase.getReason(),
@@ -151,7 +147,6 @@ public class FraudInvestigationService {
         alert.setGeminiDecision(payload.getGeminiDecision());
         alert.setRiskScore(payload.getGeminiRiskScore());
         alert.setReason(payload.getGeminiReason());
-        alert.setTransactionId(payload.getTransactionId());
         alert.setCustomerId(payload.getCustomerId());
         alert.setCreatedAt(LocalDateTime.now());
         alertRepo.save(alert);
@@ -172,7 +167,6 @@ public class FraudInvestigationService {
         fraudCase.setReason(payload.getGeminiReason());
         fraudCase.setRiskScore(payload.getGeminiRiskScore());
         fraudCase.setGeminiDecision(payload.getGeminiDecision());
-        fraudCase.setTransactionId(payload.getTransactionId());
         fraudCase.setAmount(payload.getAmount());
         fraudCase.setCustomerName(payload.getCustomerName());
         fraudCase.setCustomerBalance(payload.getCustomerBalance());
@@ -198,7 +192,6 @@ public class FraudInvestigationService {
                 payload.getGeminiRiskScore(),       // riskScore
                 payload.getGeminiReason(),          // reason
                 payload.getGeminiDecision(),        // geminiDecision
-                payload.getTransactionId(),         // transactionId
                 payload.getAmount(),                // amount
                 payload.getCustomerName(),          // customerName
                 payload.getGeminiReason(),          // geminiReason
@@ -246,7 +239,6 @@ public class FraudInvestigationService {
                 payload.getRiskScore(),
                 payload.getReason(),
                 null,                               // geminiDecision
-                null,                               // transactionId
                 null,                               // amount
                 null,                               // customerName
                 null,                               // geminiReason

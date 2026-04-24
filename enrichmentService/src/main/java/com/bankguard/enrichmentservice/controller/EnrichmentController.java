@@ -72,9 +72,7 @@ public class EnrichmentController {
             
             // Combine results
             TransactionDecisionResponse response = new TransactionDecisionResponse();
-            response.setEnrichedTransaction(enrichedTransaction);
-            response.setGeminiDecision(geminiDecision);
-            
+
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (IllegalArgumentException e) {

@@ -9,21 +9,32 @@
         <outputRelativeToContentRoot value="true" />
         <module name="gemini_test_try2" />
         <module name="enrichmentService" />
-        <module name="eurekaRegistry" />
         <module name="transactionService" />
       </profile>
-      <profile name="Annotation profile for AlertCaseService" enabled="true">
+      <profile name="Annotation profile for apiGateway" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
+        </processorPath>
+        <module name="apiGateway" />
+      </profile>
+      <profile name="Annotation profile for sarReport" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
         </processorPath>
-        <module name="apiGateway" />
-        <module name="AlertCaseService" />
         <module name="sarReport" />
+        <module name="AlertCaseService" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="eurekaRegistry" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

@@ -1,4 +1,4 @@
-package com.bankguard.enrichmentservice.dto;
+package com.bankguard.transactionservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

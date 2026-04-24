@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class DecisionRequest {
     // Current Transaction Details
-    private Long transactionId;
     private Double amount;
     private String location;              // Combined location field (city, region, or full address)
     private LocalDateTime time;

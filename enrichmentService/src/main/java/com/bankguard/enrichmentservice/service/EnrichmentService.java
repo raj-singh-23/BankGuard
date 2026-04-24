@@ -5,7 +5,7 @@ import com.bankguard.enrichmentservice.client.AlertCaseClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class EnrichmentService {
 
     @Autowired
-    private RestTemplate restTemplate;
+    private WebClient webClient;
 
     @Autowired
     private AlertCaseClient alertCaseClient;
@@ -47,8 +47,18 @@ public class EnrichmentService {
 
         // Step 4: Create response with explicit alertSent = false by default
         TransactionDecisionResponse response = new TransactionDecisionResponse();
-        response.setEnrichedTransaction(enrichedTransaction);
-        response.setGeminiDecision(geminiDecision);
+        response.setCity(enrichedTransaction.getCity());
+        response.setAmount(enrichedTransaction.getAmount());
+        response.setRiskScore(geminiDecision.getRiskScore());
+        response.setCustomerAccountNo(enrichedTransaction.getCustomerAccountNo());
+        response.setCustomerEmail(enrichedTransaction.getCustomerEmail());
+        response.setCustomerId(enrichedTransaction.getCustomerId());
+        response.setCustomerName(enrichedTransaction.getCustomerName());
+        response.setState(enrichedTransaction.getState());
+        response.setTime(enrichedTransaction.getTime());
+        response.setDecision(geminiDecision.getDecision());
+        response.setReason(geminiDecision.getReason());
+        response.setCustomerBalance(enrichedTransaction.getCustomerBalance());
         response.setAlertSent(false);  // EXPLICITLY SET TO FALSE BY DEFAULT
 
         // Step 5: Conditional AlertCase routing based on EXACT decision value
@@ -61,7 +71,7 @@ public class EnrichmentService {
             log.warn("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             log.warn("FRAUD DETECTED - SENDING ALERT TO ALERTCASE SERVICE");
             log.warn("Decision: {}, Risk Score: {}, Transaction ID: {}",
-                    trimmedDecision, geminiDecision.getRiskScore(), enrichedTransaction.getTransactionId());
+                    trimmedDecision, geminiDecision.getRiskScore());
             log.warn("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
             // Create alert payload and send to AlertCaseService
@@ -74,7 +84,6 @@ public class EnrichmentService {
             // Set convenience fields for easier access
             alertPayload.setCustomerId(enrichedTransaction.getCustomerId());
             alertPayload.setGeminiRiskScore(geminiDecision.getRiskScore());
-            alertPayload.setTransactionId(enrichedTransaction.getTransactionId());
             alertPayload.setCustomerName(enrichedTransaction.getCustomerName());
             alertPayload.setAmount(enrichedTransaction.getAmount());
 
@@ -118,7 +127,6 @@ public class EnrichmentService {
         EnrichedTransactionDTO enrichedTransaction = new EnrichedTransactionDTO();
 
         // Set transaction details (excluding receiver's account number)
-        enrichedTransaction.setTransactionId(currentTransaction.getTransactionId());
         enrichedTransaction.setAmount(currentTransaction.getAmount());
         enrichedTransaction.setCity(currentTransaction.getCity());
         enrichedTransaction.setState(currentTransaction.getState());
@@ -153,7 +161,6 @@ public class EnrichmentService {
         DecisionRequest request = new DecisionRequest();
         
         // Transaction details
-        request.setTransactionId(enrichedTransaction.getTransactionId());
         request.setAmount(enrichedTransaction.getAmount());
         // Combine city and state into location field
         String location = enrichedTransaction.getCity() != null ? enrichedTransaction.getCity() : "";
@@ -189,11 +196,12 @@ public class EnrichmentService {
      */
     public GeminiDecisionResponse getGeminiDecision(DecisionRequest decisionRequest) {
         try {
-            GeminiDecisionResponse response = restTemplate.postForObject(
-                    DECISION_ENGINE_URL,
-                    decisionRequest,
-                    GeminiDecisionResponse.class
-            );
+            GeminiDecisionResponse response = webClient.post()
+                    .uri(DECISION_ENGINE_URL)
+                    .bodyValue(decisionRequest)
+                    .retrieve()
+                    .bodyToMono(GeminiDecisionResponse.class)
+                    .block();
             return response;
         } catch (Exception e) {
             // Return a default flagged response in case of error
@@ -211,7 +219,6 @@ public class EnrichmentService {
      */
     private PreviousTransactionDTO convertToPreviousTransactionDTO(TransactionDTO transaction) {
         PreviousTransactionDTO previous = new PreviousTransactionDTO();
-        previous.setTransactionId(transaction.getTransactionId());
         previous.setAmount(transaction.getAmount());
         // Combine city and state into location field
         String location = transaction.getCity() != null ? transaction.getCity() : "";

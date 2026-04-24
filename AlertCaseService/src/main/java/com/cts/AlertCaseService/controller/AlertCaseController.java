@@ -31,12 +31,7 @@ public class AlertCaseController {
             throw new InvalidPayloadException("AlertCasePayload cannot be null");
         }
 
-        if (payload.getTransactionId() == null) {
-            throw new InvalidPayloadException(
-                    "Invalid payload: transactionId is required",
-                    "Missing required field: transactionId"
-            );
-        }
+
 
         if (payload.getGeminiRiskScore() == null) {
             throw new InvalidPayloadException(
@@ -47,10 +42,9 @@ public class AlertCaseController {
 
         log.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         log.info("RECEIVED FRAUD ALERT FROM ENRICHMENT SERVICE");
-        log.info("Decision: {}, Risk Score: {}, Transaction ID: {}, Amount: {}",
+        log.info("Decision: {}, Risk Score: {}, Amount: {}",
                 payload.getDecisionStatus(),
                 payload.getGeminiRiskScore(),
-                payload.getTransactionId(),
                 payload.getAmount());
         log.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 

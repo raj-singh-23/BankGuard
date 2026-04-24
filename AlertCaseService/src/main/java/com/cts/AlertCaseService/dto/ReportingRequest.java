@@ -14,7 +14,6 @@ public class ReportingRequest {
     private double riskScore;                   // Risk score from Gemini
     private String reason;                      // Reason for the fraud alert (from Gemini)
     private String geminiDecision;              // "flagged", "terminated"
-    private Long transactionId;                 // Transaction ID
     private Double amount;                      // Transaction amount
     private String customerName;                // Customer name
     private String geminiReason;                // Detailed reason from Gemini analysis

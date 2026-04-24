@@ -10,7 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EnrichedTransactionDTO {
-    private Long transactionId;
     private Double amount;
     private String city;
     private String state;

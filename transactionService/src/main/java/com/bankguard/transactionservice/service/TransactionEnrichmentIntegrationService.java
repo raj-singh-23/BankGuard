@@ -2,6 +2,7 @@ package com.bankguard.transactionservice.service;
 
 import com.bankguard.transactionservice.dto.CustomerEnrichmentDTO;
 import com.bankguard.transactionservice.dto.EnrichmentRequestDTO;
+import com.bankguard.transactionservice.dto.TransactionDecisionResponse;
 import com.bankguard.transactionservice.dto.TransactionEnrichmentDTO;
 import com.bankguard.transactionservice.entity.Customer;
 import com.bankguard.transactionservice.entity.Transaction;
@@ -12,7 +13,7 @@ import com.bankguard.transactionservice.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class TransactionEnrichmentIntegrationService {
     private CustomerRepository customerRepository;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private WebClient webClient;
 
     @Value("${enrichment.service.url:http://localhost:8010}")
     private String enrichmentServiceUrl;
@@ -36,7 +37,7 @@ public class TransactionEnrichmentIntegrationService {
      * Send transaction data to Enrichment Service
      * Includes: current transaction + customer profile + last 5 previous transactions
      */
-    public Object enrichTransactionWithService(Transaction transaction, Customer customer) {
+    public TransactionDecisionResponse enrichTransactionWithService(Transaction transaction, Customer customer) {
         try {
             // Create current transaction DTO
             TransactionEnrichmentDTO currentTransactionDTO = new TransactionEnrichmentDTO();
@@ -77,7 +78,12 @@ public class TransactionEnrichmentIntegrationService {
 
             // Send to Enrichment Service with Decision and Alert routing (includes Gemini analysis and AlertCase routing)
             String enrichmentUrl = enrichmentServiceUrl + "/api/enrich/transaction/with-decision-and-alert";
-            Object enrichedResponse = restTemplate.postForObject(enrichmentUrl, enrichmentRequest, Object.class);
+            TransactionDecisionResponse enrichedResponse = webClient.post()
+                    .uri(enrichmentUrl)
+                    .bodyValue(enrichmentRequest)
+                    .retrieve()
+                    .bodyToMono(TransactionDecisionResponse.class)
+                    .block();
 
             return enrichedResponse;
 

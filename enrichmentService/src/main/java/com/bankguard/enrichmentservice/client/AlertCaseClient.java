@@ -27,8 +27,7 @@ public class AlertCaseClient {
             log.info("Endpoint: {}", endpoint);
             log.info("Decision: {}, Risk Score: {}, Transaction ID: {}", 
                     payload.getDecisionStatus(), 
-                    payload.getGeminiRiskScore(),
-                    payload.getTransactionId());
+                    payload.getGeminiRiskScore());
             log.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             
             Mono<Void> response = webClient

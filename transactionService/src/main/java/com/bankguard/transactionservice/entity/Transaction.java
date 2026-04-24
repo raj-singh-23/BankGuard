@@ -39,6 +39,9 @@ public class Transaction {
     @Column(name = "receiver_account_number", nullable = false)
     private String receiverAccountNumber;
 
+    @Column(name = "status", nullable = false)
+    private String status = "pending"; // Default status
+
     @Column(name = "customer_id", nullable = false)
     private Long customerId;
 }
