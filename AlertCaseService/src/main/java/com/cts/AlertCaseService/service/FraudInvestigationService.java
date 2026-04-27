@@ -1,25 +1,29 @@
 package com.cts.AlertCaseService.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.cts.AlertCaseService.client.ReportingClient;
-import com.cts.AlertCaseService.dto.EnrichPayload;
-import com.cts.AlertCaseService.dto.FraudAlertPayload;
 import com.cts.AlertCaseService.dto.AlertCasePayload;
+import com.cts.AlertCaseService.dto.EnrichPayload;
 import com.cts.AlertCaseService.dto.ReportingRequest;
 import com.cts.AlertCaseService.entity.Alert;
 import com.cts.AlertCaseService.entity.CaseCustomer;
 import com.cts.AlertCaseService.entity.CaseEntity;
-import com.cts.AlertCaseService.exception.*;
+import com.cts.AlertCaseService.exception.AlertNotFoundException;
+import com.cts.AlertCaseService.exception.AlertProcessingException;
+import com.cts.AlertCaseService.exception.CaseNotFoundException;
+import com.cts.AlertCaseService.exception.CustomerNotFoundException;
 import com.cts.AlertCaseService.repository.AlertRepository;
 import com.cts.AlertCaseService.repository.CaseCustomerRepository;
 import com.cts.AlertCaseService.repository.CaseRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -132,72 +136,6 @@ public class FraudInvestigationService {
                     e
             );
         }
-    }
-
-    /**
-     * Process fraud alert payload from enrichmentService
-     * Handles the new consolidated payload structure
-     */
-    @Transactional
-    public void processFraudAlert(FraudAlertPayload payload) {
-        // 1. Create and persist Alert with enriched data
-        Alert alert = new Alert();
-        alert.setAlertId("ALT-" + UUID.randomUUID());
-        alert.setSeverity(payload.getRiskScore() > 80 ? "HIGH" : payload.getRiskScore() > 60 ? "MEDIUM" : "LOW");
-        alert.setGeminiDecision(payload.getGeminiDecision());
-        alert.setRiskScore(payload.getGeminiRiskScore());
-        alert.setReason(payload.getGeminiReason());
-        alert.setCustomerId(payload.getCustomerId());
-        alert.setCreatedAt(LocalDateTime.now());
-        alertRepo.save(alert);
-
-        // 2. Persist or retrieve Customer
-        CaseCustomer customer = customerRepo.findById(payload.getCustomerId())
-                .orElseGet(() -> {
-                    CaseCustomer newCustomer = new CaseCustomer();
-                    newCustomer.setCustomerId(payload.getCustomerId());
-                    return customerRepo.save(newCustomer);
-                });
-
-        // 3. Create and persist Case with enriched transaction data
-        CaseEntity fraudCase = new CaseEntity();
-        fraudCase.setCaseId("CAS-" + UUID.randomUUID());
-        fraudCase.setAlertId(alert.getAlertId());
-        fraudCase.setCaseStatus("OPEN");
-        fraudCase.setReason(payload.getGeminiReason());
-        fraudCase.setRiskScore(payload.getGeminiRiskScore());
-        fraudCase.setGeminiDecision(payload.getGeminiDecision());
-        fraudCase.setAmount(payload.getAmount());
-        fraudCase.setCustomerName(payload.getCustomerName());
-        fraudCase.setCustomerBalance(payload.getCustomerBalance());
-        fraudCase.setCreatedAt(LocalDateTime.now());
-        fraudCase.setCustomer(customer);
-        caseRepo.save(fraudCase);
-
-        // 4. Forward everything to Reporting & Compliance Service with enriched data
-        // Create a map with enriched customer data
-        java.util.Map<String, Object> enrichedCustomerData = new java.util.HashMap<>();
-        enrichedCustomerData.put("city", payload.getCity());
-        enrichedCustomerData.put("state", payload.getState());
-        enrichedCustomerData.put("customerEmail", payload.getCustomerEmail());
-        enrichedCustomerData.put("customerAccountNo", payload.getCustomerAccountNo());
-        enrichedCustomerData.put("time", payload.getTime());
-        enrichedCustomerData.put("customerId", payload.getCustomerId());
-        enrichedCustomerData.put("customerName", payload.getCustomerName());
-        
-        ReportingRequest reportingReq = new ReportingRequest(
-                fraudCase.getCaseId(),              // caseId
-                payload.getCustomerId(),    // customerId
-                fraudCase.getCaseStatus(),          // status (OPEN)
-                payload.getGeminiRiskScore(),       // riskScore
-                payload.getGeminiReason(),          // reason
-                payload.getGeminiDecision(),        // geminiDecision
-                payload.getAmount(),                // amount
-                payload.getCustomerName(),          // customerName
-                payload.getGeminiReason(),          // geminiReason
-                enrichedCustomerData                // customerPayload with enriched data
-        );
-        reportingClient.sendToReporting(reportingReq);
     }
 
     /**

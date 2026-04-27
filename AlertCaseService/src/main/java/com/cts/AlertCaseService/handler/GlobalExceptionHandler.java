@@ -1,8 +1,8 @@
 package com.cts.AlertCaseService.handler;
 
-import com.cts.AlertCaseService.dto.ErrorResponse;
-import com.cts.AlertCaseService.exception.*;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,8 +11,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
-import java.time.LocalDateTime;
-import java.util.stream.Collectors;
+import com.cts.AlertCaseService.dto.ErrorResponse;
+import com.cts.AlertCaseService.exception.AlertException;
+import com.cts.AlertCaseService.exception.AlertNotFoundException;
+import com.cts.AlertCaseService.exception.AlertProcessingException;
+import com.cts.AlertCaseService.exception.CaseNotFoundException;
+import com.cts.AlertCaseService.exception.CustomerNotFoundException;
+import com.cts.AlertCaseService.exception.InvalidPayloadException;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Global Exception Handler for AlertCaseService
@@ -108,28 +115,6 @@ public class GlobalExceptionHandler {
         errorResponse.setTimestamp(LocalDateTime.now());
         
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
-    
-    /**
-     * Handle ReportingServiceException
-     */
-    @ExceptionHandler(ReportingServiceException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<ErrorResponse> handleReportingServiceException(
-            ReportingServiceException ex, WebRequest request) {
-        
-        log.error("Reporting service error: {}", ex.getMessage(), ex);
-        
-        ErrorResponse errorResponse = new ErrorResponse(
-                ex.getErrorCode(),
-                ex.getMessage(),
-                ex.getErrorDetails(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value()
-        );
-        errorResponse.setPath(request.getDescription(false).replace("uri=", ""));
-        errorResponse.setTimestamp(LocalDateTime.now());
-        
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
     /**
