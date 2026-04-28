@@ -1,7 +1,6 @@
 package com.bankguard.enrichmentservice.client;
 
 import com.bankguard.enrichmentservice.dto.AlertCasePayload;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -10,7 +9,6 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class AlertCaseClient {
 
@@ -18,6 +16,10 @@ public class AlertCaseClient {
 
     @Value("${external.alertcase-service.url:http://localhost:8085}")
     private String alertCaseServiceUrl;
+
+    public AlertCaseClient(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.build();
+    }
 
     public void sendToAlertCase(AlertCasePayload payload) {
         try {

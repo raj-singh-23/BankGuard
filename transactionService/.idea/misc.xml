@@ -13,6 +13,7 @@
         <option value="$PROJECT_DIR$/../apiGateway/pom.xml" />
         <option value="$PROJECT_DIR$/../eurekaRegistry/pom.xml" />
         <option value="$PROJECT_DIR$/../ConfigServer/pom.xml" />
+        <option value="$PROJECT_DIR$/../EurekaServer/pom.xml" />
       </list>
     </option>
   </component>

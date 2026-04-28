@@ -4,6 +4,7 @@ import com.bankguard.enrichmentservice.dto.*;
 import com.bankguard.enrichmentservice.client.AlertCaseClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
@@ -13,14 +14,18 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EnrichmentService {
 
-    @Autowired
-    private WebClient webClient;
+    private final WebClient webClient;
 
     @Autowired
     private AlertCaseClient alertCaseClient;
 
-    private static final String DECISION_ENGINE_URL = "http://localhost:7002/api/gemini/analyze-transaction";
+    @Value("${external.decision-engine-service.url:http://localhost:7002}")
+    private String decisionEngineBaseUrl;
 
+
+    public EnrichmentService(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.build();
+    }
 
     /**
      * Complete enrichment and decision flow with conditional AlertCase routing
@@ -192,12 +197,13 @@ public class EnrichmentService {
 
     /**
      * Send decision request to Gemini decision engine
-     * Endpoint: http://localhost:7000/api/gemini/analyze-transaction
+     * Endpoint: configurable via external.decision-engine-service.url
      */
     public GeminiDecisionResponse getGeminiDecision(DecisionRequest decisionRequest) {
         try {
+            String url = decisionEngineBaseUrl + "/api/gemini/analyze-transaction";
             GeminiDecisionResponse response = webClient.post()
-                    .uri(DECISION_ENGINE_URL)
+                    .uri(url)
                     .bodyValue(decisionRequest)
                     .retrieve()
                     .bodyToMono(GeminiDecisionResponse.class)

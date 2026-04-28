@@ -27,11 +27,14 @@ public class TransactionEnrichmentIntegrationService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @Autowired
-    private WebClient webClient;
+    private final WebClient webClient;
 
     @Value("${enrichment.service.url:http://localhost:8010}")
     private String enrichmentServiceUrl;
+
+    public TransactionEnrichmentIntegrationService(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.build();
+    }
 
     /**
      * Send transaction data to Enrichment Service

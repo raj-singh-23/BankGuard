@@ -4,9 +4,13 @@ server:
 spring:
   application:
     name: config-server
+  profiles:
+    active: native
   cloud:
     config:
       server:
-        git:
-          uri: git@github.com:raj-singh-23/config-server.git
-          default-label: main                          # branch name (main)
+        native:
+          search-locations: file:../configurations
+
+
+

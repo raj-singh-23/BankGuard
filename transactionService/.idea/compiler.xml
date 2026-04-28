@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="gemini_test_try2" />
+        <module name="EurekaServer" />
         <module name="enrichmentService" />
         <module name="ConfigServer" />
         <module name="transactionService" />
@@ -21,15 +22,6 @@
         </processorPath>
         <module name="apiGateway" />
         <module name="sarReport" />
-      </profile>
-      <profile name="Annotation profile for AlertCaseService" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
-        </processorPath>
         <module name="AlertCaseService" />
       </profile>
     </annotationProcessing>
@@ -41,6 +33,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="AlertCaseService" options="-parameters" />
       <module name="ConfigServer" options="-parameters" />
+      <module name="EurekaServer" options="-parameters" />
       <module name="apiGateway" options="-parameters" />
       <module name="enrichmentService" options="-parameters" />
       <module name="eurekaRegistry" options="-parameters" />
